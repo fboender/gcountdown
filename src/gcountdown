@@ -15,6 +15,8 @@ class TimerSetter():
 	def __init__(self):
 		self.bin_path = os.path.dirname(sys.argv[0])
 		self.gladefile = os.path.join(self.bin_path, 'gcountdown.glade')
+		self.alert_time = None
+		self.alert_msg = None
 
 		self.wtree = gtk.glade.XML(self.gladefile)
 		self.window = self.wtree.get_widget("window_main")
@@ -25,23 +27,24 @@ class TimerSetter():
 		}
 		self.wtree.signal_autoconnect(sighandlers)
 
-	def run(self):
-		self.alert = None
+	def main(self, alert_msg):
+		self.wtree.get_widget("entry_message").set_text(alert_msg)
 		self.window.show()
 		gtk.main()
 		self.window.hide()
-		return(self.alert)
+		return((self.alert_time, self.alert_msg))
 
 	def on_window_main_destroy(self, *args):
 		gtk.main_quit()
 
 	def on_button_apply_clicked(self, *args):
 		now = datetime.datetime.now()
-		self.alert = now + datetime.timedelta(
+		self.alert_time = now + datetime.timedelta(
 			hours = self.wtree.get_widget("spinbutton_hours").get_value_as_int(),
 			minutes = self.wtree.get_widget("spinbutton_mins").get_value_as_int(),
 			seconds = self.wtree.get_widget("spinbutton_secs").get_value_as_int()
 		)
+		self.alert_msg = self.wtree.get_widget("entry_message").get_text()
 		gtk.main_quit()
 
 	def on_button_cancel_clicked(self, *args):
@@ -49,17 +52,18 @@ class TimerSetter():
 
 class Timer:
 	def __init__(self):
-		self.icon_path = os.path.dirname(sys.argv[0])
+		self.icon_path = os.path.abspath(os.path.dirname(sys.argv[0]))
 		self.icon_idle = os.path.join(self.icon_path, 'idle.png')
 		self.icon_running = os.path.join(self.icon_path, 'running.png')
 		self.icon_alarm = os.path.join(self.icon_path, 'alarm.png')
 		self.tick_interval = 1
 		self.alert_time = None # When to alert
+		self.alert_msg = "Pizza's done!" # What to alert
 		self.alerted = False # Have we already alerted for the current alert?
 		self.editing = False # Are we editing an alert (don't open new edit window)
 
 		self.icon = gtk.status_icon_new_from_file(self.icon_idle)
-		self.icon.connect('activate',self.icon_click)
+		self.icon.connect('activate',self.on_icon_clicked)
 		self.icon.set_visible(True)
 
 		self.alert_reset()
@@ -69,22 +73,25 @@ class Timer:
 		self.alert_time = None
 		self.alerted = False
 		self.icon.set_tooltip("Idle")
+		self.icon.set_blinking(False)
 
-	def alert_set(self, alert_time):
-		if alert_time:
-			self.icon.set_from_file(self.icon_running)
-			self.alert_time = alert_time
-		else:
-			self.alert_reset()
+	def alert_set(self, alert_time, alert_msg):
+		self.icon.set_from_file(self.icon_running)
+		self.alert_time = alert_time
+		self.alert_msg = alert_msg
 
-	def icon_click(self,dummy):
+	def on_icon_clicked(self,dummy):
 		if self.alerted:
 			self.alert_reset()
 		else:
 			if not self.editing:
 				self.editing = True
 				w = TimerSetter()
-				self.alert_set(w.run())
+				alert_time, alert_msg = w.main(self.alert_msg)
+				if alert_time and alert_msg:
+					self.alert_set(alert_time, alert_msg)
+				else:
+					self.alert_reset()
 				self.editing = False
 
 	def delta_frac(self, delta):
@@ -99,19 +106,20 @@ class Timer:
 				# Show elapsed time since alert in tooltip
 				d = self.delta_frac(now - self.alert_time)
 				self.icon.set_tooltip(
-					"Timer ran out %i hours, %i minutes and %i seconds ago" % (
-						d['hours'], d['mins'], d['secs'])
+					"%s - %i hours, %i minutes and %i seconds ago" % (
+						self.alert_msg, d['hours'], d['mins'], d['secs'])
 				)
 
 				# Sound the alarm if we haven't done so yet
 				if not self.alerted:
 					# Change icon
 					self.icon.set_from_file(self.icon_alarm)
-					self.icon.set_tooltip("Timer ran out")
+					self.icon.set_tooltip(self.alert_msg)
+					self.icon.set_blinking(True)
 
 					# Show notification
 					pynotify.init('Timer')
-					notifier = pynotify.Notification('Timer ran out')
+					notifier = pynotify.Notification(self.alert_msg, 'The timer you set has run out. Click the bell icon to reset it.', 'file://%s' % (self.icon_alarm))
 					notifier.set_urgency(pynotify.URGENCY_CRITICAL)
 					notifier.set_hint('x', self.icon.get_geometry()[1].x)
 					notifier.set_hint('y', self.icon.get_geometry()[1].x)
