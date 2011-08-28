@@ -52,6 +52,9 @@ Copyright & License
 
 gCountDown is (C) Copyright 2011, Ferry Boender
 
+gCountDown is licensed under the MIT License. See the LICENSE.txt file
+for more information.
+
 gCountDown uses icons from the Silk Icon set, available here:
 
 	http://www.famfamfam.com/lab/icons/silk/
@@ -60,5 +63,7 @@ gCountDown uses icons from the Silk Icon set, available here:
 
 	Creative Commons Attribution 3.0 License 
 
-gCountDown is licensed under the MIT License. See the LICENSE.txt file
-for more information.
+gCountDown includes part of Pyglet, a cross-platform windowing and multimedia
+library for Python, available here:
+
+	http://pyglet.org/

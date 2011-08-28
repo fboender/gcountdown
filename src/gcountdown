@@ -10,6 +10,7 @@ import gtk
 import gtk.glade
 import gobject
 import pynotify
+import pyglet
 
 class TimerSetter():
 	def __init__(self):
@@ -17,6 +18,7 @@ class TimerSetter():
 		self.gladefile = os.path.join(self.bin_path, 'gcountdown.glade')
 		self.alert_time = None
 		self.alert_msg = None
+		self.play_sound = False
 
 		self.wtree = gtk.glade.XML(self.gladefile)
 		self.window = self.wtree.get_widget("window_main")
@@ -32,7 +34,7 @@ class TimerSetter():
 		self.window.show()
 		gtk.main()
 		self.window.hide()
-		return((self.alert_time, self.alert_msg))
+		return((self.alert_time, self.alert_msg, self.play_sound))
 
 	def on_window_main_destroy(self, *args):
 		gtk.main_quit()
@@ -45,6 +47,7 @@ class TimerSetter():
 			seconds = self.wtree.get_widget("spinbutton_secs").get_value_as_int()
 		)
 		self.alert_msg = self.wtree.get_widget("entry_message").get_text()
+		self.play_sound = self.wtree.get_widget("checkbutton_sound").get_active()
 		gtk.main_quit()
 
 	def on_button_cancel_clicked(self, *args):
@@ -59,6 +62,7 @@ class Timer:
 		self.tick_interval = 1
 		self.alert_time = None # When to alert
 		self.alert_msg = "Pizza's done!" # What to alert
+		self.play_sound = False
 		self.alerted = False # Have we already alerted for the current alert?
 		self.editing = False # Are we editing an alert (don't open new edit window)
 
@@ -68,17 +72,18 @@ class Timer:
 
 		self.alert_reset()
 
+	def alert_set(self, alert_time, alert_msg, play_sound):
+		self.icon.set_from_file(self.icon_running)
+		self.alert_time = alert_time
+		self.alert_msg = alert_msg
+		self.play_sound = play_sound
+
 	def alert_reset(self):
 		self.icon.set_from_file(self.icon_idle)
 		self.alert_time = None
 		self.alerted = False
 		self.icon.set_tooltip("Idle")
 		self.icon.set_blinking(False)
-
-	def alert_set(self, alert_time, alert_msg):
-		self.icon.set_from_file(self.icon_running)
-		self.alert_time = alert_time
-		self.alert_msg = alert_msg
 
 	def on_icon_clicked(self,dummy):
 		if self.alerted:
@@ -87,9 +92,9 @@ class Timer:
 			if not self.editing:
 				self.editing = True
 				w = TimerSetter()
-				alert_time, alert_msg = w.main(self.alert_msg)
+				alert_time, alert_msg, play_sound = w.main(self.alert_msg)
 				if alert_time and alert_msg:
-					self.alert_set(alert_time, alert_msg)
+					self.alert_set(alert_time, alert_msg, play_sound)
 				else:
 					self.alert_reset()
 				self.editing = False
@@ -116,6 +121,11 @@ class Timer:
 					self.icon.set_from_file(self.icon_alarm)
 					self.icon.set_tooltip(self.alert_msg)
 					self.icon.set_blinking(True)
+
+					# Play sound
+					if self.play_sound:
+						sound = pyglet.media.load('apert.wav', streaming=False)
+						smanager = sound.play()
 
 					# Show notification
 					pynotify.init('Timer')
