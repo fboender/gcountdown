@@ -7,6 +7,7 @@
     <property name="modal">True</property>
     <property name="window_position">mouse</property>
     <property name="icon">idle.png</property>
+    <property name="type_hint">dialog</property>
     <child>
       <widget class="GtkAlignment" id="alignment1">
         <property name="visible">True</property>
