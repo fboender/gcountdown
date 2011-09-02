@@ -12,6 +12,22 @@ import gobject
 import pynotify
 import pyglet
 
+class ContextMenu():
+	def __init__(self, button, activate_time):
+		self.button = button
+		self.activate_time = activate_time
+
+		menu = gtk.Menu()
+		menu_item = gtk.ImageMenuItem('gtk-quit')
+		menu_item.connect('activate', self.on_quit_clicked)
+		menu_item.show()
+		menu.append(menu_item)
+		menu.show()
+		menu.popup(None, None, None, button, activate_time)
+
+	def on_quit_clicked(self, menu_item):
+		gtk.main_quit()
+
 class TimerSetter():
 	def __init__(self):
 		self.bin_path = os.path.dirname(sys.argv[0])
@@ -68,9 +84,13 @@ class Timer:
 
 		self.icon = gtk.status_icon_new_from_file(self.icon_idle)
 		self.icon.connect('activate',self.on_icon_clicked)
+		self.icon.connect('popup-menu',self.on_icon_popup_menu)
 		self.icon.set_visible(True)
 
 		self.alert_reset()
+
+	def on_icon_popup_menu(self, icon, button, activate_time):
+		ContextMenu(button, activate_time)
 
 	def alert_set(self, alert_time, alert_msg, play_sound):
 		self.icon.set_from_file(self.icon_running)
