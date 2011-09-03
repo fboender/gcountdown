@@ -1,0 +1,3 @@
+description: Create a new release of gCountDown
+#require: vendor.zip
+clean: releases/

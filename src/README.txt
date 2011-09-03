@@ -24,7 +24,11 @@ Installation:
 Usage
 -----
 
-To start:
+To start from the menu:
+
+	Menu -> Accessories -> gCountDown
+
+To start from the commandline:
 
 	$ cd gcountdown
 	$ ./gcountdown

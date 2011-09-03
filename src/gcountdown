@@ -30,7 +30,7 @@ class ContextMenu():
 
 class TimerSetter():
 	def __init__(self):
-		self.bin_path = os.path.dirname(sys.argv[0])
+		self.bin_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 		self.gladefile = os.path.join(self.bin_path, 'gcountdown.glade')
 		self.alert_time = None
 		self.alert_msg = None
@@ -71,7 +71,7 @@ class TimerSetter():
 
 class Timer:
 	def __init__(self):
-		self.icon_path = os.path.abspath(os.path.dirname(sys.argv[0]))
+		self.icon_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 		self.icon_idle = os.path.join(self.icon_path, 'idle.png')
 		self.icon_running = os.path.join(self.icon_path, 'running.png')
 		self.icon_alarm = os.path.join(self.icon_path, 'alarm.png')
@@ -170,5 +170,8 @@ class Timer:
 		gtk.main()
 
 if __name__ == "__main__":
+	working_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+	os.chdir(working_dir)
+
 	app = Timer()
 	app.main()

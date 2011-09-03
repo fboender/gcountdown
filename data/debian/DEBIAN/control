@@ -1,0 +1,11 @@
+Package: gcountdown
+Version: %%VERSION%%
+Section: utils
+Priority: optional
+Architecture: all
+Essential: no
+Depends: python, python-gtk2, python-glade2
+Maintainer: Ferry Boender <ferry.boender@gmail.com>
+Description: A simple timer applet that sits in your system tray. 
+ A simple timer applet that sits in your system tray. It displays an alert and
+ optionnaly plays a sound when the timer you've set runs out.
