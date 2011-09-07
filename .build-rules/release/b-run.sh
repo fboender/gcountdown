@@ -47,7 +47,7 @@ tar -czf $APPNAME-$VERSION.tar.gz $APPNAME-$VERSION/
 cd ..
 
 cd releases
-dpkg-deb --build debian >/dev/null
+fakeroot dpkg-deb --build debian >/dev/null
 mv debian.deb gcountdown-$VERSION.deb 
 cd ..
 
