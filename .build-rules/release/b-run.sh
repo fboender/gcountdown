@@ -29,6 +29,8 @@ cp src/LICENSE.txt releases/debian/usr/share/$APPNAME/
 cp src/README.txt releases/debian/usr/share/$APPNAME/
 cp src/$APPNAME releases/debian/usr/share/$APPNAME/
 cp src/*.png releases/debian/usr/share/$APPNAME/
+cp src/*.glade releases/debian/usr/share/$APPNAME/
+cp src/*.wav releases/debian/usr/share/$APPNAME/
 cp data/xdg/$APPNAME.desktop releases/debian/usr/share/applications/
 cp -ar src/pyglet releases/debian/usr/share/gcountdown/
 
