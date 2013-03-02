@@ -8,6 +8,11 @@ gCountDown is a very simple alarm countdown timer. It sits in your system tray
 where you can click it to set an alarm. Once the time runs out, you will be
 alerted.
 
+### Screenshots
+
+Some screenshots can be found on the wiki (Screenshots page)[https://bitbucket.org/fboender/gcountdown/wiki/Screenshots]
+
+
 Requirements & installation
 ---------------------------
 
