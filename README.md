@@ -13,13 +13,13 @@ Requirements & installation
 
 Requires:
 
-  * Python 2.5+
-  * pygtk
-  * pynotify
+*   Python 2.5+
+*   pygtk
+*   pynotify
 
 Installation:
 
-  * TODO
+*   TODO
 
 Usage
 -----
@@ -50,6 +50,7 @@ To CANCEL an alarm:
 To RESET an alarm after it has gone off:
 
 	Click the bell icon in your system tray.
+
 
 Copyright & License
 -------------------
