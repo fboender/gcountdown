@@ -10,7 +10,7 @@ alerted.
 
 ### Screenshots
 
-Some screenshots can be found on the wiki (Screenshots page)[https://bitbucket.org/fboender/gcountdown/wiki/Screenshots]
+Some screenshots can be found on the wiki [Screenshots page](https://bitbucket.org/fboender/gcountdown/wiki/Screenshots)
 
 
 Requirements & installation
